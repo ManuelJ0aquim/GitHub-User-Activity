@@ -39,3 +39,7 @@ type PullRequest struct {
 type WatchPayload struct {
 	Action string `json:"action"`
 }
+
+type User struct {
+	Login string `json:"login"`
+}

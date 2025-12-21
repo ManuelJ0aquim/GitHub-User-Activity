@@ -1,21 +1,21 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 
 	"github.com/ManuelJ0aquim/GitHub-User-Activity/internal/github"
-	"github.com/ManuelJ0aquim/GitHub-User-Activity/internal/model"
 )
 
 func main() {
-	if len(os.Args) != 2 {
-		fmt.Println("Usage: ./githubUserActivity <github-username>")
+	if len(os.Args) != 3 {
+		fmt.Println("Usage: ./githubUserActivity <github-username> <events | followers | following | repos>")
 		return
 	}
 
 	username := os.Args[1]
+	command := os.Args[2]
+
 	userExists, err := github.UserExists(username)
 	if err != nil {
 		fmt.Println("Error:", err)
@@ -27,51 +27,56 @@ func main() {
 		return
 	}
 
-	events, err := github.FetchEvents(username)
-	if err != nil {
-		fmt.Println("Error fetching events:", err)
-		return
-	}
+	switch command {
 
-	for _, event := range events {
-		switch event.Type {
-		case "PushEvent":
-			var payload model.PushPayload
-			if err := json.Unmarshal(event.Payload, &payload); err != nil {
-				fmt.Println("Error decoding PushEvent payload:", err)
-				continue
-			}
-			fmt.Printf("Pushed %d commits to %s\n", len(payload.Commits), event.Repo.Name)
-
-		case "PullRequestEvent":
-			var payload model.PullRequestPayload
-			if err := json.Unmarshal(event.Payload, &payload); err != nil {
-				fmt.Println("Error decoding PullRequestEvent payload:", err)
-				continue
-			}
-			fmt.Printf("Pull request #%d in %s\n", payload.PullRequest.Number, event.Repo.Name)
-
-		case "IssuesEvent":
-			var payload model.IssuePayload
-			if err := json.Unmarshal(event.Payload, &payload); err != nil {
-				fmt.Println("Error decoding IssuesEvent payload:", err)
-				continue
-			}
-			fmt.Printf("Opened issue #%d in %s\n", payload.Issue.Number, event.Repo.Name)
-
-		case "IssueCommentEvent":
-			var payload model.IssuePayload
-			if err := json.Unmarshal(event.Payload, &payload); err != nil {
-				fmt.Println("Error decoding IssueCommentEvent payload:", err)
-				continue
-			}
-			fmt.Printf("Commented on issue #%d in %s\n", payload.Issue.Number, event.Repo.Name)
-
-		case "WatchEvent":
-			fmt.Printf("Starred %s\n", event.Repo.Name)
-
-		default:
-			fmt.Println("Other event:", event.Type)
+	case "followers":
+		followers, err := github.FetchFollowers(username)
+		if err != nil {
+			fmt.Println("Error fetching followers:", err)
+			return
 		}
+
+		fmt.Println("Followers:")
+		for _, follower := range followers {
+			fmt.Println("-", follower.Login)
+		}
+
+	case "events":
+		events, err := github.FetchEvents(username)
+		if err != nil {
+			fmt.Println("Error fetching events:", err)
+			return
+		}
+
+		fmt.Println("Events:")
+		for _, event := range events {
+			PrintEvent(event)
+		}
+
+	case "following":
+		following, err := github.FetchFollowing(username)
+		if err != nil {
+			fmt.Println("Error fetching following:", err)
+			return
+		}
+		fmt.Println("Following:")
+		for _, following := range following {
+			fmt.Println("-", following.Login)
+		}
+
+	case "repos":
+		repos, err := github.FetchRepos(username)
+		if err != nil {
+			fmt.Println("Error fetching repos:", err)
+			return
+		}
+		fmt.Println("Repos:")
+		for _, repo := range repos {
+			fmt.Println("-", repo.Name)
+		}
+
+	default:
+		fmt.Println("Unknown command:", command)
+		fmt.Println("Available commands: events, followers, following, repos")
 	}
 }

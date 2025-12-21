@@ -4,22 +4,27 @@
 
 ## Descrição
 
-GitHub User Activity é uma aplicação de linha de comando projetada para visualizar a atividade recente de qualquer usuário do GitHub. Construído com Go, oferece uma maneira simples de acompanhar commits, pull requests, issues e outras ações realizadas por usuários na plataforma.
+GitHub User Activity é uma aplicação de linha de comando projetada para visualizar informações e atividade de qualquer usuário do GitHub. Construído com Go, oferece uma maneira simples de acompanhar commits, pull requests, issues, repositórios, seguidores e outras informações de usuários na plataforma.
 
 Este projeto foi criado com o objetivo de **praticar Go**, consumo de APIs REST, manipulação de JSON, organização de código e arquitetura básica de aplicações CLI.
 
 ## Funcionalidades
 
-- Buscar eventos recentes de um usuário do GitHub
-- Exibir diferentes tipos de eventos:
+- **Validação de usuário** - Verifica se o usuário existe antes de fazer requisições
+- **Eventos** - Buscar e exibir eventos recentes de um usuário do GitHub:
   - **PushEvent** - Commits enviados para repositórios
   - **PullRequestEvent** - Pull requests criados ou atualizados
   - **IssuesEvent** - Issues abertas
   - **IssueCommentEvent** - Comentários em issues
   - **WatchEvent** - Repositórios marcados com estrela
+- **Seguidores** - Listar todos os seguidores de um usuário
+- **Seguindo** - Listar todos os usuários que um usuário está seguindo
+- **Repositórios** - Listar todos os repositórios de um usuário
 - Integração com a API pública do GitHub
 
-## Estrutura do Evento
+## Estruturas de Dados
+
+### Evento
 
 Cada evento possui as seguintes propriedades:
 
@@ -27,7 +32,19 @@ Cada evento possui as seguintes propriedades:
 - **repo** – Informações do repositório (nome)
 - **payload** – Dados específicos do evento (commits, issues, pull requests, etc.)
 
-Os dados são obtidos diretamente da API do GitHub (`https://api.github.com/users/{username}/events`).
+### Usuário
+
+Cada usuário possui:
+
+- **login** – Nome de usuário do GitHub
+
+### Repositório
+
+Cada repositório possui:
+
+- **name** – Nome do repositório
+
+Os dados são obtidos diretamente da API pública do GitHub.
 
 ## Requisitos
 
@@ -58,51 +75,109 @@ Isto irá gerar o binário `githubUserActivity`.
 
 ## Como Usar
 
-### Comando Básico
+### Sintaxe
 
 ```bash
-# Executar a aplicação
-./githubUserActivity <github-username>
+./githubUserActivity <github-username> <comando>
 ```
+
+### Comandos Disponíveis
+
+- `events` - Exibe os eventos recentes do usuário
+- `followers` - Lista os seguidores do usuário
+- `following` - Lista quem o usuário está seguindo
+- `repos` - Lista os repositórios do usuário
 
 ### Exemplos de Uso
 
-#### Visualizar atividade de um usuário
+#### Visualizar eventos de um usuário
 
 ```bash
-./githubUserActivity octocat
+./githubUserActivity octocat events
+```
+
+#### Listar seguidores
+
+```bash
+./githubUserActivity octocat followers
+```
+
+#### Listar quem o usuário está seguindo
+
+```bash
+./githubUserActivity octocat following
+```
+
+#### Listar repositórios
+
+```bash
+./githubUserActivity octocat repos
 ```
 
 ## Exemplos de Saída
 
-### PushEvent
+### Comando `events`
+
+#### PushEvent
 
 ```
+Events:
 Pushed 3 commits to octocat/Hello-World
 ```
 
-### PullRequestEvent
+#### PullRequestEvent
 
 ```
+Events:
 Pull request #42 in octocat/Hello-World
 ```
 
-### IssuesEvent
+#### IssuesEvent
 
 ```
+Events:
 Opened issue #15 in octocat/Hello-World
 ```
 
-### IssueCommentEvent
+#### IssueCommentEvent
 
 ```
+Events:
 Commented on issue #15 in octocat/Hello-World
 ```
 
-### WatchEvent
+#### WatchEvent
 
 ```
+Events:
 Starred octocat/Hello-World
+```
+
+### Comando `followers`
+
+```
+Followers:
+- user1
+- user2
+- user3
+```
+
+### Comando `following`
+
+```
+Following:
+- userA
+- userB
+- userC
+```
+
+### Comando `repos`
+
+```
+Repos:
+- Hello-World
+- Spoon-Knife
+- git-consortium
 ```
 
 ## Estrutura do Projeto
@@ -111,12 +186,17 @@ Starred octocat/Hello-World
 .
 ├── cmd/
 │   └── githubUserActivity/
-│       └── main.go              # Ponto de entrada da aplicação (CLI)
+│       ├── main.go              # Ponto de entrada da aplicação (CLI)
+│       └── printEvent.go       # Função para imprimir eventos formatados
 ├── internal/
 │   ├── github/
-│   │   └── client.go            # Cliente para consumir a API do GitHub
+│   │   ├── client.go            # Cliente para buscar eventos
+│   │   ├── followers.go         # Função para buscar seguidores
+│   │   ├── following.go         # Função para buscar quem está seguindo
+│   │   ├── repos.go             # Função para buscar repositórios
+│   │   └── userExist.go         # Função para validar se usuário existe
 │   └── model/
-│       └── event.go             # Definição das estruturas de eventos
+│       └── event.go             # Definição das estruturas de dados
 ├── go.mod
 └── README.md
 ```
