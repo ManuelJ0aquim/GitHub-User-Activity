@@ -20,7 +20,7 @@ Este projeto foi criado com o objetivo de **praticar Go**, consumo de APIs REST,
 - **Seguidores** - Listar todos os seguidores de um usuário
 - **Seguindo** - Listar todos os usuários que um usuário está seguindo
 - **Repositórios** - Listar todos os repositórios de um usuário
-- Integração com a API pública do GitHub
+- Integração com a API pública do GitHub!
 
 ## Estruturas de Dados
 
