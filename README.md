@@ -93,25 +93,25 @@ Isto irá gerar o binário `githubUserActivity`.
 #### Visualizar eventos de um usuário
 
 ```bash
-./githubUserActivity octocat events
+./githubUserActivity ManuelJ0aquim events
 ```
 
 #### Listar seguidores
 
 ```bash
-./githubUserActivity octocat followers
+./githubUserActivity ManuelJ0aquim followers
 ```
 
 #### Listar quem o usuário está seguindo
 
 ```bash
-./githubUserActivity octocat following
+./githubUserActivity ManuelJ0aquim following
 ```
 
 #### Listar repositórios
 
 ```bash
-./githubUserActivity octocat repos
+./githubUserActivity ManuelJ0aquim repos
 ```
 
 ## Exemplos de Saída
@@ -122,35 +122,35 @@ Isto irá gerar o binário `githubUserActivity`.
 
 ```
 Events:
-Pushed 3 commits to octocat/Hello-World
+Pushed 3 commits to ManuelJ0aquim/Hello-World
 ```
 
 #### PullRequestEvent
 
 ```
 Events:
-Pull request #42 in octocat/Hello-World
+Pull request #42 in ManuelJ0aquim/Hello-World
 ```
 
 #### IssuesEvent
 
 ```
 Events:
-Opened issue #15 in octocat/Hello-World
+Opened issue #15 in ManuelJ0aquim/Hello-World
 ```
 
 #### IssueCommentEvent
 
 ```
 Events:
-Commented on issue #15 in octocat/Hello-World
+Commented on issue #15 in ManuelJ0aquim/Hello-World
 ```
 
 #### WatchEvent
 
 ```
 Events:
-Starred octocat/Hello-World
+Starred ManuelJ0aquim/Hello-World
 ```
 
 ### Comando `followers`
